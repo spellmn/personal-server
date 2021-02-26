@@ -16,6 +16,16 @@ const getDealerships = async(req,res,next) => {
 //    res.send(dealership);
 }
 
+const deleteDealership = async(req,res,next) => {
+    if (typeof req.query.id != 'undefined') {
+        let dealership = await Dealership.find( { "_id" : req.query.id } ).sort( { "name": 1 } ).deleteOne();
+        if (dealership.ok) {
+            res.send ({status:200,success:true})
+        }
+        res.send ({status:400,success:false})
+    }
+}
+
 const getTourcard = async(req,res,next) => {
     let tourcard = await Tourcard.find( { "year" : req.query.year, "association" : req.query.association } ).sort( { "name": 1 } );
     res.send(tourcard);
@@ -43,6 +53,7 @@ const postTourcard = async(req, res, next) => {
 }
 
 module.exports = {
+    deleteDealership,
     getDealerships,
     getTourcard,
     getHardrock,

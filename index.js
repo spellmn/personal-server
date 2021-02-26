@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const { connectionString } = require('./config/db.js');
 
 var getInformationController = require('./controllers/getInformationController');
+var setInformationController = require('./controllers/setInformationController');
 var informationController = require('./controllers/information');
 
 const app = express();
@@ -33,6 +34,9 @@ mongoose.connect('mongodb+srv://rwUser:rwUserPassword@cluster0.iwvnu.mongodb.net
 });
 
 app.get('/getDealerships', getInformationController.getDealerships);
+app.get('/deleteDealership', getInformationController.deleteDealership);
+app.post('/setDealerships', setInformationController.setDealerships);
+app.post('/editDealership', setInformationController.editDealership);
 app.get('/getTourcard', getInformationController.getTourcard);
 app.get('/getHardrock', getInformationController.getHardrock);
 app.get('/getSlush', getInformationController.getSlush);
