@@ -2,6 +2,7 @@ const Dealership = require('../models/dealerships')
 const Tourcard = require('../models/tourcard')
 const Hardrock = require('../models/hardrock')
 const Slush = require('../models/slush')
+const { ObjectId } = require('mongodb')
 
 const getDealerships = async (req, res, next) => {
 	if (typeof req.query.id != 'undefined') {
@@ -48,8 +49,28 @@ const getSlush = async (req, res, next) => {
 }
 
 const postTourcard = async (req, res) => {
-	let newTourcard = await Tourcard.create(req.body)
-	res.send({ status: 200, success: true, tourcard: newTourcard })
+	if (req.body.name) {
+		let newTourcard = await Tourcard.create(req.body)
+		res.send({ status: 200, success: true, tourcard: newTourcard })
+	} else res.send({ status: 400, success: false })
+}
+
+const putTourcard = async (req, res) => {
+	try {
+		let foundTourcard = await Tourcard.findOneAndUpdate(
+			{ _id: ObjectId(req.params.id) },
+			req.body,
+			{ returnDocument: 'after', returnOriginal: false }
+		)
+		foundTourcard
+			? res.send({
+					status: 'OK',
+					data: foundTourcard,
+			  })
+			: res.send({ status: 'NOT FOUND' })
+	} catch (err) {
+		res.status(500).send({ status: 'error', error: err })
+	}
 }
 
 module.exports = {
@@ -59,4 +80,5 @@ module.exports = {
 	getHardrock,
 	getSlush,
 	postTourcard,
+	putTourcard,
 }

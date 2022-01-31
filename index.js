@@ -33,6 +33,7 @@ app.use(function (req, res, next) {
 
 //mongoose.connect('mongodb+srv://roUser:roUserPassword@cluster0.iodve.mongodb.net/default').then(() => {
 mongoose
+	.set('useFindAndModify', false)
 	.connect(
 		'mongodb+srv://rwUser:rwUserPassword@cluster0.iwvnu.mongodb.net/default',
 		{ useNewUrlParser: true, useUnifiedTopology: true }
@@ -53,6 +54,7 @@ app.get('/getHardrock', getInformationController.getHardrock)
 app.get('/getSlush', getInformationController.getSlush)
 
 app.post('/postTourcard', getInformationController.postTourcard)
+app.put('/putTourcard/:id', getInformationController.putTourcard)
 
 var server = app.listen(process.env.PORT || 8001, function () {
 	var port = server.address().port
