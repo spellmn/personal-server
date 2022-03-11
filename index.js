@@ -15,10 +15,11 @@ const app = express();
 app.use(cors());
 
 // Auth middleware - protects all routes
-app.get('*', auth);
-app.post('*', auth);
-app.put('*', auth);
-app.delete('*', auth);
+// TODO - uncomment
+// app.get('*', auth);
+// app.post('*', auth);
+// app.put('*', auth);
+// app.delete('*', auth);
 
 app.use(
 	bodyParser.urlencoded({
