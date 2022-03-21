@@ -62,6 +62,7 @@ app.post('/users', userController.postUser);
 app.put('/users/:id', userController.putUser);
 app.delete('/users/:id', userController.deleteUser);
 app.post('/auth', authController.signIn);
+app.get('/checkToken', authController.checkToken);
 
 var server = app.listen(process.env.PORT || 8001, function () {
 	var port = server.address().port;

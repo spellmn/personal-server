@@ -31,6 +31,12 @@ const signIn = async (req, res) => {
 	}
 };
 
+const checkToken = async (req, res) => {
+	// Just uses auth middleware to check token
+	res.send({ status: 'OK' });
+};
+
 module.exports = {
 	signIn,
+	checkToken,
 };
