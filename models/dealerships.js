@@ -18,6 +18,7 @@ const DealershipSchema = new Schema({
 	sun: { type: String },
 	coords: { type: String },
 	chip: { type: String },
+	visited: { type: String },
 })
 
 const myDB = mongoose.connection.useDb('harley')
