@@ -4,43 +4,46 @@ const Hardrock = require('../models/hardrock');
 const { ObjectId } = require('mongodb');
 
 const setDealerships = async (req, res, next) => {
-	console.log("Set Dealership");
+	console.log('Set Dealership');
 	const dealership = new Dealership(req.body);
 	const data = await dealership.save();
 	res.send({ status: 200, success: true, body: data });
 };
 
-const editDealership = async (req, res, next) => {
-	const updatedData = JSON.parse(JSON.stringify(req.body));
-
+const editDealership = async (req, res) => {
 	try {
-		let foundDealership = await Dealership.findOneAndUpdate({ _id: ObjectId(updatedData._id) }, req.body, { returnDocument: 'after', returnOriginal: false });
-		console.log("Returned: " + foundDealership);
+		let foundDealership = await Dealership.findOneAndUpdate(
+			{ _id: ObjectId(req.params.id) },
+			req.body,
+			{ returnDocument: 'after', returnOriginal: false }
+		);
 		foundDealership
 			? res.send({
 					status: 'OK',
 					data: foundDealership,
-			})
+			  })
 			: res.send({ status: 'NOT FOUND' });
 	} catch (err) {
 		res.status(500).send({ status: 'error', error: err });
 	}
 };
 
-const deleteDealership = async (req, res, next) => {
-	console.log("Delete Dealership");
-	if (typeof req.query.id != 'undefined') {
-		let dealership = await Dealership.find({ _id: req.query.id }).sort({ name: 1 }).deleteOne();
-		if (dealership.ok) {
-			res.send({ status: 200, success: true });
-		}
+const deleteDealership = async (req, res) => {
+	try {
+		await Dealership.deleteOne({ _id: ObjectId(req.params.id) });
+		res.send({ status: 200, success: true });
+	} catch (err) {
 		res.send({ status: 400, success: false });
 	}
 };
 
 const putHardrock = async (req, res) => {
 	try {
-		let foundHardrock = await Hardrock.findOneAndUpdate({ _id: ObjectId(req.params.id) }, req.body, { returnDocument: 'after', returnOriginal: false });
+		let foundHardrock = await Hardrock.findOneAndUpdate(
+			{ _id: ObjectId(req.params.id) },
+			req.body,
+			{ returnDocument: 'after', returnOriginal: false }
+		);
 		foundHardrock
 			? res.send({
 					status: 'OK',
@@ -61,7 +64,11 @@ const postTourcard = async (req, res) => {
 
 const putTourcard = async (req, res) => {
 	try {
-		let foundTourcard = await Tourcard.findOneAndUpdate({ _id: ObjectId(req.params.id) }, req.body, { returnDocument: 'after', returnOriginal: false });
+		let foundTourcard = await Tourcard.findOneAndUpdate(
+			{ _id: ObjectId(req.params.id) },
+			req.body,
+			{ returnDocument: 'after', returnOriginal: false }
+		);
 		foundTourcard
 			? res.send({
 					status: 'OK',

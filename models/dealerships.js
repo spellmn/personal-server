@@ -1,6 +1,5 @@
-const mongoose = require('mongoose')
-
-const Schema = mongoose.Schema
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const DealershipSchema = new Schema({
 	id: { type: String },
@@ -18,9 +17,10 @@ const DealershipSchema = new Schema({
 	sun: { type: String },
 	coords: { type: String },
 	chip: { type: String },
-	visited: { type: String },
-})
+	// Anything goes | No type validation
+	visited: { type: mongoose.SchemaTypes.Mixed },
+});
 
-const myDB = mongoose.connection.useDb('harley')
+const myDB = mongoose.connection.useDb('harley');
 
-module.exports = myDB.model('Dealership', DealershipSchema, 'locations')
+module.exports = myDB.model('Dealership', DealershipSchema, 'locations');

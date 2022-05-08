@@ -38,7 +38,10 @@ app.use(function (req, res, next) {
 //mongoose.connect('mongodb+srv://roUser:roUserPassword@cluster0.iodve.mongodb.net/default').then(() => {
 mongoose
 	.set('useFindAndModify', false)
-	.connect('mongodb+srv://rwUser:rwUserPassword@cluster0.iwvnu.mongodb.net/default', { useNewUrlParser: true, useUnifiedTopology: true })
+	.connect(
+		'mongodb+srv://rwUser:rwUserPassword@cluster0.iwvnu.mongodb.net/default',
+		{ useNewUrlParser: true, useUnifiedTopology: true }
+	)
 	.then(() => {
 		console.log('database connected');
 	})
@@ -50,9 +53,9 @@ app.get('/getDealerships', getInformationController.getDealerships);
 app.get('/getTourcard', getInformationController.getTourcard);
 app.get('/getHardrock', getInformationController.getHardrock);
 app.get('/getSlush', getInformationController.getSlush);
-app.get('/deleteDealership', setInformationController.deleteDealership);
 app.post('/setDealerships', setInformationController.setDealerships);
-app.post('/editDealership', setInformationController.editDealership);
+app.put('/editDealership/:id', setInformationController.editDealership);
+app.delete('/deleteDealership/:id', setInformationController.deleteDealership);
 app.post('/postTourcard', setInformationController.postTourcard);
 app.put('/putTourcard/:id', setInformationController.putTourcard);
 app.put('/putHardrock/:id', setInformationController.putHardrock);
