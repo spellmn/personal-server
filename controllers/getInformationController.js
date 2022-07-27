@@ -41,7 +41,7 @@ const importDealerships = async (requ, resp, next) => {
 			})
 			.on('end', function () {
 				var body = Buffer.concat(bodyChunks);
-				xml2js.parseString(body, (err, result) => {
+				xml2js.parseString(body, async (err, result) => {
 					let dealers;
 					if (err) {
 						// Not a valid XML
@@ -51,7 +51,35 @@ const importDealerships = async (requ, resp, next) => {
 						const json = JSON.stringify(result, null, 4);
 						dealers = JSON.parse(json).dealerResponse.dealers;
 					}
-					resp.send(dealers);
+					console.log('Mapping imported dealerships');
+					let mappedDealerships = [];
+					dealers.forEach((d) => {
+						mappedDealerships.push({
+							id: d.id || '',
+							name: d.name || '',
+							address: d.contact.address1 || '',
+							city: d.contact.city || '',
+							state: d.contact.state || '',
+							zip: d.contact.postalCode || '',
+							country: d.contact.country || '',
+							phone: d.contact.phoneNumber || '',
+							website: d.website || '',
+							coords: `${d.contact.latitude},${d.contact.longitude}` || '',
+							mon: d.hours?.dealerHours?.split('<br/>')[1].split(': ')[1] || '',
+							sat: d.hours?.dealerHours?.split('<br/>')[6].split(': ')[1] || '',
+							sun: d.hours?.dealerHours?.split('<br/>')[0].split(': ')[1] || '',
+						});
+					});
+					try {
+						// Clear collection
+						await Dealership.deleteMany({});
+						// Insert mapped dealerships
+						await Dealership.insertMany(mappedDealerships);
+						console.log('Finished importing dealerships');
+						resp.send(mappedDealerships);
+					} catch (err) {
+						console.log('Mongo Insert Error: ' + err.message);
+					}
 				});
 			});
 	});

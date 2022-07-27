@@ -23,4 +23,8 @@ const DealershipSchema = new Schema({
 
 const myDB = mongoose.connection.useDb('harley');
 
-module.exports = myDB.model('Dealership', DealershipSchema, 'locations');
+module.exports = myDB.model(
+	'Dealership',
+	DealershipSchema,
+	'locations_imported'
+);
