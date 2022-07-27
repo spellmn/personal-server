@@ -68,6 +68,8 @@ const importDealerships = async (requ, resp, next) => {
 							mon: d.hours?.dealerHours?.split('<br/>')[1].split(': ')[1] || '',
 							sat: d.hours?.dealerHours?.split('<br/>')[6].split(': ')[1] || '',
 							sun: d.hours?.dealerHours?.split('<br/>')[0].split(': ')[1] || '',
+							chip: '0',
+							visited: '0',
 						});
 					});
 					try {
