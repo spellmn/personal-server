@@ -43,31 +43,58 @@ const importDealerships = async (requ, resp, next) => {
 				var body = Buffer.concat(bodyChunks);
 				xml2js.parseString(body, async (err, result) => {
 					let dealers;
-					if (err) {
-						// Not a valid XML
-						dealers = JSON.parse(body).dealerResponse.dealers;
-					} else {
-						// JSON
-						const json = JSON.stringify(result, null, 4);
-						dealers = JSON.parse(json).dealerResponse.dealers;
-					}
+					// Not a valid XML
+					if (err) dealers = JSON.parse(body).dealerResponse.dealers;
+					// XML
+					else dealers = result.dealerResponse.dealers;
 					console.log('Mapping imported dealerships');
 					let mappedDealerships = [];
 					dealers.forEach((d) => {
 						mappedDealerships.push({
-							id: d.id || '',
-							name: d.name || '',
-							address: d.contact.address1 || '',
-							city: d.contact.city || '',
-							state: d.contact.state || '',
-							zip: d.contact.postalCode || '',
-							country: d.contact.country || '',
-							phone: d.contact.phoneNumber || '',
-							website: d.website || '',
-							coords: `${d.contact.latitude},${d.contact.longitude}` || '',
-							mon: d.hours?.dealerHours?.split('<br/>')[1].split(': ')[1] || '',
-							sat: d.hours?.dealerHours?.split('<br/>')[6].split(': ')[1] || '',
-							sun: d.hours?.dealerHours?.split('<br/>')[0].split(': ')[1] || '',
+							id: Array.isArray(d.id) ? d.id[0] : d.id || '',
+							name: Array.isArray(d.name) ? d.name[0] : d.name || '',
+							address: Array.isArray(d.contact)
+								? d.contact[0]?.address1?.toString()
+								: d.contact.address1 || '',
+							city: Array.isArray(d.contact)
+								? d.contact[0]?.city?.toString()
+								: d.contact.city || '',
+							state: Array.isArray(d.contact)
+								? d.contact[0].state?.toString()
+								: d.contact.state || '',
+							zip: Array.isArray(d.contact)
+								? d.contact[0]?.postalCode?.toString()
+								: d.contact.postalCode || '',
+							country: Array.isArray(d.contact)
+								? d.contact[0]?.country?.toString()
+								: d.contact.country || '',
+							phone: Array.isArray(d.contact)
+								? d.contact[0]?.phoneNumber?.toString()
+								: d.contact.phoneNumber || '',
+							website: Array.isArray(d.website)
+								? d.website[0]
+								: d.website || '',
+							coords: Array.isArray(d.contact)
+								? `${d.contact[0]?.latitude?.toString()},${d.contact[0]?.longitude?.toString()}`
+								: `${d.contact.latitude},${d.contact.longitude}` || '',
+							mon: Array.isArray(d.hours)
+								? d.hours[0]?.dealerHours
+										?.toString()
+										.split('<br/>')[1]
+										.split(': ')[1]
+								: d.hours?.dealerHours?.split('<br/>')[1].split(': ')[1] || '',
+							sat: Array.isArray(d.hours)
+								? d.hours[0]?.dealerHours
+										?.toString()
+										.split('<br/>')[6]
+										.split(': ')[1]
+								: d.hours?.dealerHours?.split('<br/>')[6].split(': ')[1] || '',
+							sun: Array.isArray(d.hours)
+								? d.hours[0]?.dealerHours
+										?.toString()
+										.split('<br/>')[0]
+										.split(': ')[1]
+								: d.hours?.dealerHours?.split('<br/>')[0].split(': ')[1] || '',
 							chip: '0',
 							visited: '0',
 						});
