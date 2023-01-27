@@ -80,11 +80,21 @@ const putTourcard = async (req, res) => {
 	}
 };
 
+const deleteTourcard = async (req, res) => {
+	try {
+		await Tourcard.deleteOne({ _id: ObjectId(req.params.id) });
+		res.send({ status: 200, success: true });
+	} catch (err) {
+		res.send({ status: 400, success: false });
+	}
+};
+
 module.exports = {
 	setDealerships,
 	editDealership,
 	deleteDealership,
 	postTourcard,
 	putTourcard,
+	deleteTourcard,
 	putHardrock,
 };
