@@ -56,10 +56,16 @@ const putHardrock = async (req, res) => {
 };
 
 const postTourcard = async (req, res) => {
-	if (req.body.name) {
+	let foundTourcard = await Tourcard.findOne({
+		id: req.body.id,
+		year: req.body.year,
+	});
+	if (foundTourcard) res.send({ status: 409, success: false });
+	else if (!req.body.name) res.send({ status: 400, success: false });
+	else {
 		let newTourcard = await Tourcard.create(req.body);
 		res.send({ status: 200, success: true, tourcard: newTourcard });
-	} else res.send({ status: 400, success: false });
+	}
 };
 
 const putTourcard = async (req, res) => {
