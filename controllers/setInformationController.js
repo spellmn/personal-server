@@ -56,15 +56,27 @@ const putHardrock = async (req, res) => {
 };
 
 const postTourcard = async (req, res) => {
-	let foundTourcard = await Tourcard.findOne({
-		id: req.body.id,
-		year: req.body.year,
-	});
-	if (foundTourcard) res.send({ status: 409, success: false });
-	else if (!req.body.name) res.send({ status: 400, success: false });
-	else {
-		let newTourcard = await Tourcard.create(req.body);
-		res.send({ status: 200, success: true, tourcard: newTourcard });
+	try {
+		// Check for null values before fetching from Mongo
+		if (!req.body.name || !req.body.id || !req.body.year) {
+			res.status(400).send({ msg: 'Error: Something went wrong' });
+			return;
+		}
+		let foundTourcard = await Tourcard.findOne({
+			id: req.body.id,
+			year: req.body.year,
+		});
+		// Check for duplicate tourcard
+		if (foundTourcard)
+			res
+				.status(409)
+				.send({ msg: 'Error: Tourcard already exists for the given year' });
+		else {
+			let newTourcard = await Tourcard.create(req.body);
+			res.status(200).send({ tourcard: newTourcard });
+		}
+	} catch (err) {
+		res.status(500).send({ status: 'error', error: err });
 	}
 };
 
