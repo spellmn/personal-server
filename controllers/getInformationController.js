@@ -15,8 +15,6 @@ const getDealerships = async (req, res, next) => {
 		let dealership = await Dealership.find({}).sort({ name: 1 });
 		res.send(dealership);
 	}
-	//    let dealership = await Dealership.find().sort( { "name": 1 } );
-	//    res.send(dealership);
 };
 
 const getTourcard = async (req, res, next) => {
@@ -44,12 +42,12 @@ const importDealerships = async (requ, resp, next) => {
 				xml2js.parseString(body, async (err, result) => {
 					let dealers;
 					// Not a valid XML
-					if (err) dealers = JSON.parse(body).dealerResponse.dealers;
+					if (err) dealers = JSON.parse(body)?.dealerResponse?.dealers;
 					// XML
-					else dealers = result.dealerResponse.dealers;
+					else dealers = result?.dealerResponse?.dealers;
 					console.log('Mapping imported dealerships');
 					let mappedDealerships = [];
-					dealers.forEach((d) => {
+					dealers?.forEach((d) => {
 						mappedDealerships.push({
 							id: Array.isArray(d.id) ? d.id[0] : d.id || '',
 							name: Array.isArray(d.name) ? d.name[0] : d.name || '',
@@ -100,20 +98,24 @@ const importDealerships = async (requ, resp, next) => {
 						});
 					});
 					try {
-						// Clear collection
-						await Dealership.deleteMany({});
-						// Insert mapped dealerships
-						await Dealership.insertMany(mappedDealerships);
-						console.log('Finished importing dealerships');
-						resp.send(mappedDealerships);
+						if (mappedDealerships.length > 0) {
+							// Clear collection
+							await Dealership.deleteMany({});
+							// Insert mapped dealerships
+							await Dealership.insertMany(mappedDealerships);
+							console.log('Finished importing dealerships');
+							resp.send(mappedDealerships);
+						} else throw new Error('No dealers found');
 					} catch (err) {
-						console.log('Mongo Insert Error: ' + err.message);
+						console.log('Error: ' + err.message);
+						resp.status(500).send({ status: 'error', error: err.message });
 					}
 				});
 			});
 	});
-	req.on('error', function (e) {
-		console.log('Import Error: ' + e.message);
+	req.on('error', function (err) {
+		console.log('Error: ' + err.message);
+		resp.status(500).send({ status: 'error', error: err.message });
 	});
 };
 
