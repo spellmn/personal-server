@@ -6,23 +6,31 @@ const xml2js = require('xml2js');
 const https = require('https');
 
 const getDealerships = async (req, res, next) => {
-	if (typeof req.query.id != 'undefined') {
-		let dealership = await Dealership.find({ _id: req.query.id }).sort({
-			name: 1,
-		});
-		res.send(dealership);
-	} else {
-		let dealership = await Dealership.find({}).sort({ name: 1 });
-		res.send(dealership);
+	try {
+		if (typeof req.query.id != 'undefined') {
+			let dealership = await Dealership.find({ _id: req.query.id }).sort({
+				name: 1,
+			});
+			res.status(200).send(dealership);
+		} else {
+			let dealership = await Dealership.find({}).sort({ name: 1 });
+			res.status(200).send(dealership);
+		}
+	} catch (err) {
+		res.status(500).send({ success: false, error: err });
 	}
 };
 
 const getTourcard = async (req, res, next) => {
-	let tourcard = await Tourcard.find({
-		year: req.query.year,
-		association: req.query.association,
-	}).sort({ name: 1 });
-	res.send(tourcard);
+	try {
+		let tourcard = await Tourcard.find({
+			year: req.query.year,
+			association: req.query.association,
+		}).sort({ name: 1 });
+		res.status(200).send(tourcard);
+	} catch (err) {
+		res.status(500).send({ success: false, error: err });
+	}
 };
 
 const importDealerships = async (requ, resp, next) => {
@@ -120,13 +128,21 @@ const importDealerships = async (requ, resp, next) => {
 };
 
 const getHardrock = async (req, res, next) => {
-	let hardrock = await Hardrock.find({}).sort({ name: 1 });
-	res.send(hardrock);
+	try {
+		let hardrock = await Hardrock.find({}).sort({ name: 1 });
+		res.status(200).send(hardrock);
+	} catch (err) {
+		res.status(500).send({ success: false, error: err });
+	}
 };
 
 const getSlush = async (req, res, next) => {
-	let slush = await Slush.find({}).sort({ name: 1 });
-	res.send(slush);
+	try {
+		let slush = await Slush.find({}).sort({ name: 1 });
+		res.status(200).send(slush);
+	} catch (err) {
+		res.status(500).send({ success: false, error: err });
+	}
 };
 
 module.exports = {

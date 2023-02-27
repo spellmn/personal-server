@@ -4,10 +4,13 @@ const Hardrock = require('../models/hardrock');
 const { ObjectId } = require('mongodb');
 
 const setDealerships = async (req, res, next) => {
-	console.log('Set Dealership');
-	const dealership = new Dealership(req.body);
-	const data = await dealership.save();
-	res.send({ status: 200, success: true, body: data });
+	try {
+		const dealership = new Dealership(req.body);
+		const data = await dealership.save();
+		res.status(200).send({ success: true, body: data });
+	} catch (err) {
+		res.status(500).send({ success: false });
+	}
 };
 
 const editDealership = async (req, res) => {
@@ -18,11 +21,11 @@ const editDealership = async (req, res) => {
 			{ returnDocument: 'after', returnOriginal: false }
 		);
 		foundDealership
-			? res.send({
+			? res.status(200).send({
 					status: 'OK',
 					data: foundDealership,
 			  })
-			: res.send({ status: 'NOT FOUND' });
+			: res.status(500).send({ status: 'error', msg: 'Not found' });
 	} catch (err) {
 		res.status(500).send({ status: 'error', error: err });
 	}
@@ -31,9 +34,9 @@ const editDealership = async (req, res) => {
 const deleteDealership = async (req, res) => {
 	try {
 		await Dealership.deleteOne({ _id: ObjectId(req.params.id) });
-		res.send({ status: 200, success: true });
+		res.status(200).send({ success: true });
 	} catch (err) {
-		res.send({ status: 400, success: false });
+		res.status(500).send({ success: false });
 	}
 };
 
@@ -45,11 +48,11 @@ const putHardrock = async (req, res) => {
 			{ returnDocument: 'after', returnOriginal: false }
 		);
 		foundHardrock
-			? res.send({
+			? res.status(200).send({
 					status: 'OK',
 					data: foundHardrock,
 			  })
-			: res.send({ status: 'NOT FOUND' });
+			: res.status(500).send({ status: 'error', msg: 'Not found' });
 	} catch (err) {
 		res.status(500).send({ status: 'error', error: err });
 	}
@@ -88,11 +91,11 @@ const putTourcard = async (req, res) => {
 			{ returnDocument: 'after', returnOriginal: false }
 		);
 		foundTourcard
-			? res.send({
+			? res.status(200).send({
 					status: 'OK',
 					data: foundTourcard,
 			  })
-			: res.send({ status: 'NOT FOUND' });
+			: res.status(500).send({ status: 'error', msg: 'Not found' });
 	} catch (err) {
 		res.status(500).send({ status: 'error', error: err });
 	}
@@ -101,9 +104,9 @@ const putTourcard = async (req, res) => {
 const deleteTourcard = async (req, res) => {
 	try {
 		await Tourcard.deleteOne({ _id: ObjectId(req.params.id) });
-		res.send({ status: 200, success: true });
+		res.status(200).send({ success: true });
 	} catch (err) {
-		res.send({ status: 400, success: false });
+		res.status(500).send({ success: false });
 	}
 };
 
