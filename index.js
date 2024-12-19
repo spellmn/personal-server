@@ -37,10 +37,8 @@ app.use(function (req, res, next) {
 
 //mongoose.connect('mongodb+srv://roUser:roUserPassword@cluster0.iodve.mongodb.net/default').then(() => {
 mongoose
-	.set('useFindAndModify', false)
 	.connect(
-		'mongodb+srv://rwUser:rwUserPassword@cluster0.iwvnu.mongodb.net/default',
-		{ useNewUrlParser: true, useUnifiedTopology: true }
+		'mongodb+srv://rwUser:rwUserPassword@cluster0.iwvnu.mongodb.net/default'
 	)
 	.then(() => {
 		console.log('database connected');
