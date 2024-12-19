@@ -2,6 +2,7 @@ const Dealership = require('../models/dealerships');
 const Tourcard = require('../models/tourcard');
 const Hardrock = require('../models/hardrock');
 const Slush = require('../models/slush');
+const Debt = require('../models/debt');
 const xml2js = require('xml2js');
 const https = require('https');
 
@@ -145,10 +146,20 @@ const getSlush = async (req, res, next) => {
 	}
 };
 
+const getDebt = async (req, res, next) => {
+	try {
+		let debt = await Debt.find({}).sort({ name: 1 });
+		res.status(200).send(debt);
+	} catch (err) {
+		res.status(500).send({ success: false, error: err });
+	}
+};
+
 module.exports = {
 	getDealerships,
 	getTourcard,
 	getHardrock,
 	getSlush,
 	importDealerships,
+	getDebt,
 };

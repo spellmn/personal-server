@@ -51,6 +51,7 @@ app.get('/getDealerships', getInformationController.getDealerships);
 app.get('/getTourcard', getInformationController.getTourcard);
 app.get('/getHardrock', getInformationController.getHardrock);
 app.get('/getSlush', getInformationController.getSlush);
+app.get('/getDebt', getInformationController.getDebt);
 app.get('/importDealerships', getInformationController.importDealerships);
 app.post('/setDealerships', setInformationController.setDealerships);
 app.put('/editDealership/:id', setInformationController.editDealership);
