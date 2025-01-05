@@ -7,12 +7,18 @@ class FinancialEntry {
 	totalPaid; // Tracks the total amount paid toward the balance
 	interestAccrued; // Tracks interest accrued over time
 
-	constructor(amount, remainingBalance, interestRate, minimumPayment) {
+	constructor(
+		amount,
+		remainingBalance,
+		interestRate,
+		minimumPayment,
+		totalPaid = 0
+	) {
 		this.amount = amount; // Transaction amount (e.g., a payment or charge)
 		this.remainingBalance = remainingBalance; // Total debt/loan balance
 		this.interestRate = interestRate; // Annual interest rate
 		this.minimumPayment = minimumPayment; // Minimum payment requirement
-		this.totalPaid = 0; // Start with no payments made
+		this.totalPaid = totalPaid; // Start with no payments made
 		this.interestAccrued = 0; // Start with no interest accrued
 	}
 
@@ -53,4 +59,91 @@ class FinancialEntry {
 	}
 }
 
-module.exports = { FinancialEntry };
+// Function to create a new financial entry
+const createFinancialEntry = (
+	amount,
+	remainingBalance,
+	interestRate,
+	minimumPayment,
+	totalPaid
+) => {
+	return new FinancialEntry(
+		amount,
+		remainingBalance,
+		interestRate,
+		minimumPayment,
+		totalPaid
+	);
+};
+
+// Function to create a monthly debt and calculate the next month's date based on the provided date
+const createMonthlyDebt = (
+	entry,
+	type,
+	category,
+	subCategory,
+	holder,
+	description,
+	currentDate
+) => {
+	return {
+		type,
+		category,
+		subCategory,
+		date: currentDate,
+		holder,
+		description,
+		amount: entry.amount,
+		remainingBalance: entry.remainingBalance,
+		interestRate: entry.interestRate,
+		minimumPayment: entry.minimumPayment,
+		totalPaid: entry.totalPaid,
+	};
+};
+
+// Function to create a series of monthly debts
+const createMonthlyDebtsForMonths = (numMonths, request) => {
+	let currentEntry = createFinancialEntry(
+		request.body.amount,
+		request.body.remainingBalance,
+		request.body.interestRate,
+		request.body.minimumPayment,
+		request.body.totalPaid
+	);
+
+	let currentDate = request.body.date; // Start with the original date from req.body
+	let allDebts = [];
+
+	for (let month = 1; month <= numMonths; month++) {
+		currentEntry.makePayment(request.body.amount); // Make payment for the current month
+
+		// Calculate the next month's date
+		const currentDateObj = new Date(currentDate);
+		currentDateObj.setMonth(currentDateObj.getMonth() + 1);
+		currentDateObj.setDate(1);
+		currentDate = currentDateObj.toISOString().split('T')[0];
+
+		// Create the monthly debt for the current month
+		const monthlyDebt = createMonthlyDebt(
+			currentEntry,
+			request.body.type,
+			request.body.category,
+			request.body.subCategory,
+			request.body.holder,
+			request.body.description,
+			currentDate
+		);
+
+		// Add the debt to the list of all debts
+		allDebts.push(monthlyDebt);
+	}
+
+	return allDebts;
+};
+
+module.exports = {
+	FinancialEntry,
+	createFinancialEntry,
+	createMonthlyDebt,
+	createMonthlyDebtsForMonths,
+};

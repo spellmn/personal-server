@@ -5,7 +5,6 @@ const Slush = require('../models/slush');
 const Debt = require('../models/debt');
 const xml2js = require('xml2js');
 const https = require('https');
-const { FinancialEntry } = require('../utils/FinancialEntry');
 
 const getDealerships = async (req, res, next) => {
 	try {
@@ -155,30 +154,6 @@ const getDebt = async (req, res, next) => {
 		res.status(500).send({ success: false, error: err });
 	}
 };
-
-// Entry 1: January
-const janEntry = new FinancialEntry(
-	118.25, // Payment made in January
-	1800, // Remaining balance in January
-	20.99, // Annual interest rate
-	100 // Minimum payment
-);
-
-// Entry 2: February
-const febEntry = new FinancialEntry(
-	116.91, // Payment made in February
-	janEntry.remainingBalance, // Remaining balance in February
-	20.99, // Annual interest rate
-	100 // Minimum payment
-);
-
-console.log('interest: ', janEntry.calculateInterest()); // Monthly interest
-janEntry.makePayment(118.25); // Make the January payment
-console.log('remaining: ', janEntry.remainingBalance); // Updated balance after interest
-
-console.log('interest: ', febEntry.calculateInterest()); // Monthly interest
-febEntry.makePayment(116.91); // Make the February payment
-console.log('remaining: ', febEntry.remainingBalance); // Updated balance after interest
 
 module.exports = {
 	getDealerships,

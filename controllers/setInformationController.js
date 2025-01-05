@@ -1,7 +1,9 @@
 const Dealership = require('../models/dealerships');
 const Tourcard = require('../models/tourcard');
+const Debt = require('../models/debt');
 const Hardrock = require('../models/hardrock');
 const { ObjectId } = require('mongodb');
+const { createMonthlyDebtsForMonths } = require('../utils/FinancialEntry');
 
 const setDealerships = async (req, res, next) => {
 	try {
@@ -110,6 +112,37 @@ const deleteTourcard = async (req, res) => {
 	}
 };
 
+const postDebt = async (req, res) => {
+	try {
+		// Check for null values before fetching from Mongo
+		if (
+			!req.body.type ||
+			!req.body.category ||
+			!req.body.amount ||
+			!req.body.remainingBalance ||
+			!req.body.interestRate ||
+			!req.body.minimumPayment
+		) {
+			res.status(400).send({ msg: 'Error: Something went wrong' });
+			return;
+		}
+
+		const numMonths = 6; // Set how many months you want to process
+		const futureDebts = createMonthlyDebtsForMonths(numMonths, req);
+
+		await Debt.create(req.body);
+
+		futureDebts.forEach(async (debt) => {
+			await Debt.create(debt);
+		});
+
+		res.status(200).send({ status: 'ok' });
+	} catch (err) {
+		console.log(err);
+		res.status(500).send({ status: 'error', error: err });
+	}
+};
+
 module.exports = {
 	setDealerships,
 	editDealership,
@@ -118,4 +151,5 @@ module.exports = {
 	putTourcard,
 	deleteTourcard,
 	putHardrock,
+	postDebt,
 };
