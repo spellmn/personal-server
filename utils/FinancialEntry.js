@@ -1,4 +1,4 @@
-// Debt calculator code trial
+// Debt calculator code
 class FinancialEntry {
 	amount; // Represents a specific payment or transaction amount
 	interestRate; // Annual interest rate (e.g., 20.99)
@@ -36,6 +36,8 @@ class FinancialEntry {
 
 	// Update Remaining Balance after a Payment
 	makePayment(paymentAmount) {
+		// TODO - include minimum payment calculation as validation
+
 		this.totalPaid += paymentAmount;
 		// First, calculate the interest on the current remaining balance
 		this.calculateInterest();
