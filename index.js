@@ -61,6 +61,9 @@ app.put('/putTourcard/:id', setInformationController.putTourcard);
 app.delete('/deleteTourcard/:id', setInformationController.deleteTourcard);
 app.put('/putHardrock/:id', setInformationController.putHardrock);
 
+app.delete('/deleteDebt/:id', setInformationController.deleteDebt);
+app.put('/putDebt/:id', setInformationController.putDebt);
+
 app.get('/users', userController.getUsers);
 app.post('/users', userController.postUser);
 app.put('/users/:id', userController.putUser);
