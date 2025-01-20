@@ -5,6 +5,7 @@ const Hardrock = require('../models/hardrock');
 const Debt = require('../models/debt');
 const { ObjectId } = require('mongodb');
 const mongoose = require('mongoose');
+const debt = require('../models/debt');
 
 const setDealerships = async (req, res, next) => {
 	try {
@@ -98,28 +99,21 @@ const deleteTourcard = async (req, res) => {
 const postDebt = async (req, res) => {
 	try {
 		// Check for null values before fetching from Mongo
-		if (
-			!req.body.type ||
-			!req.body.category ||
-			!req.body.amount ||
-			!req.body.remainingBalance ||
-			!req.body.interestRate ||
-			!req.body.minimumPayment
-		) {
+		if (!req.body.type || !req.body.category || !req.body.amount) {
 			res.status(400).send({ msg: 'Error: Something went wrong' });
 			return;
 		}
 
-		const numMonths = 6; // Set how many months you want to process
-		const futureDebts = createMonthlyDebtsForMonths(numMonths, req);
+		// const numMonths = 6; // Set how many months you want to process
+		// const futureDebts = createMonthlyDebtsForMonths(numMonths, req);
 
 		await Debt.create(req.body);
 
-		futureDebts.forEach(async (debt) => {
-			await Debt.create(debt);
-		});
+		// futureDebts.forEach(async (debt) => {
+		// 	await Debt.create(debt);
+		// });
 
-		res.status(200).send({ status: 'ok' });
+		res.status(200).send({ status: 'ok', debt: req.body });
 	} catch (err) {
 		res.status(500).send({ status: 'error', error: err });
 	}
