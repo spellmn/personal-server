@@ -2,10 +2,7 @@ const Dealership = require('../models/dealerships');
 const Tourcard = require('../models/tourcard');
 const Debt = require('../models/debt');
 const Hardrock = require('../models/hardrock');
-const Debt = require('../models/debt');
 const { ObjectId } = require('mongodb');
-const mongoose = require('mongoose');
-const debt = require('../models/debt');
 
 const setDealerships = async (req, res, next) => {
 	try {
@@ -104,14 +101,7 @@ const postDebt = async (req, res) => {
 			return;
 		}
 
-		// const numMonths = 6; // Set how many months you want to process
-		// const futureDebts = createMonthlyDebtsForMonths(numMonths, req);
-
 		await Debt.create(req.body);
-
-		// futureDebts.forEach(async (debt) => {
-		// 	await Debt.create(debt);
-		// });
 
 		res.status(200).send({ status: 'ok', debt: req.body });
 	} catch (err) {
