@@ -2,8 +2,9 @@ const Dealership = require('../models/dealerships');
 const Tourcard = require('../models/tourcard');
 const Debt = require('../models/debt');
 const Hardrock = require('../models/hardrock');
+const Debt = require('../models/debt');
 const { ObjectId } = require('mongodb');
-const { createMonthlyDebtsForMonths } = require('../utils/FinancialEntry');
+const mongoose = require('mongoose');
 
 const setDealerships = async (req, res, next) => {
 	try {
@@ -39,24 +40,6 @@ const deleteDealership = async (req, res) => {
 		res.status(200).send({ success: true });
 	} catch (err) {
 		res.status(500).send({ success: false });
-	}
-};
-
-const putHardrock = async (req, res) => {
-	try {
-		let foundHardrock = await Hardrock.findOneAndUpdate(
-			{ _id: ObjectId(req.params.id) },
-			req.body,
-			{ returnDocument: 'after', returnOriginal: false }
-		);
-		foundHardrock
-			? res.status(200).send({
-					status: 'OK',
-					data: foundHardrock,
-			  })
-			: res.status(500).send({ status: 'error', msg: 'Not found' });
-	} catch (err) {
-		res.status(500).send({ status: 'error', error: err });
 	}
 };
 
@@ -138,8 +121,57 @@ const postDebt = async (req, res) => {
 
 		res.status(200).send({ status: 'ok' });
 	} catch (err) {
+		res.status(500).send({ status: 'error', error: err });
+	}
+};
+
+const putHardrock = async (req, res) => {
+	try {
+		let foundHardrock = await Hardrock.findOneAndUpdate(
+			{ _id: ObjectId(req.params.id) },
+			req.body,
+			{ returnDocument: 'after', returnOriginal: false }
+		);
+		foundHardrock
+			? res.status(200).send({
+					status: 'OK',
+					data: foundHardrock,
+			  })
+			: res.status(500).send({ status: 'error', msg: 'Not found' });
+	} catch (err) {
+		res.status(500).send({ status: 'error', error: err });
+	}
+};
+
+const putDebt = async (req, res) => {
+	try {
+		let foundRecord = await Debt.findOneAndUpdate(
+			{ _id: new ObjectId(req.params.id) },
+			req.body,
+			{ returnDocument: 'after', returnOriginal: false }
+		);
+		foundRecord
+			? res.status(200).send({
+					status: 'OK',
+					data: foundRecord,
+			  })
+			: res.status(500).send({ status: 'error', msg: 'Not found' });
+	} catch (err) {
 		console.log(err);
 		res.status(500).send({ status: 'error', error: err });
+	}
+};
+
+const deleteDebt = async (req, res) => {
+	console.log('hit DELETE 1');
+	console.log(req.params.id);
+	// console.log(new ObjectId(req.params.id));
+	console.log('hit DELETE 2');
+	try {
+		await Debt.deleteOne({ _id: new ObjectId(req.params.id) });
+		res.status(200).send({ success: true });
+	} catch (err) {
+		res.status(500).send({ success: false });
 	}
 };
 
@@ -152,4 +184,6 @@ module.exports = {
 	deleteTourcard,
 	putHardrock,
 	postDebt,
+	putDebt,
+	deleteDebt,
 };
