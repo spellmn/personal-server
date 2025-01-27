@@ -96,14 +96,14 @@ const deleteTourcard = async (req, res) => {
 const postDebt = async (req, res) => {
 	try {
 		// Check for null values before fetching from Mongo
-		if (!req.body.type || !req.body.category || !req.body.amount) {
+		if (!req.body.category || !req.body.amount) {
 			res.status(400).send({ msg: 'Error: Something went wrong' });
 			return;
 		}
 
-		await Debt.create(req.body);
+		let debt = await Debt.create(req.body);
 
-		res.status(200).send({ status: 'ok', debt: req.body });
+		res.status(200).send({ status: 'ok', debt });
 	} catch (err) {
 		res.status(500).send({ status: 'error', error: err });
 	}
